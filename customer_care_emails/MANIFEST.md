@@ -5,7 +5,6 @@ customer_care_emails
 
 ## Source
 Completed CSV dataset selected from the approved dataset list.
-Source repository/card: rtweera/customer_care_emails
 
 ## Local CSV folder path
 sample_data/
