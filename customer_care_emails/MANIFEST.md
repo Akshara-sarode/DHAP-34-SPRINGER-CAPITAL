@@ -1,18 +1,22 @@
-# DHAP 34 — Story 1 Manifest
+# Dataset Manifest
 
-## Dataset
+## Dataset Name
 customer_care_emails
 
-## Source
-Completed CSV dataset selected from the approved dataset list.
-
-## Local CSV folder path
+## Local CSV Folder Path
 sample_data/
 
-## Target PostgreSQL table
+## Target PostgreSQL Table
 public.customer_care_emails
 
+## Description
+This dataset contains customer care email records that will be ingested from a local CSV file into PostgreSQL using a Dockerized Apache Airflow pipeline.
+
+## Source
+- Dataset selected from the approved dataset list (Analysis Status: Complete)
+- CSV downloaded from the provided SharePoint location
+
 ## Notes
-- The source CSV contains one email/message record per row.
-- `email_types` and `product_types` are stored as stringified list values in the raw CSV; the pipeline can keep them as `text` in PostgreSQL for the initial load.
-- The external PostgreSQL target is expected to be reachable from Dockerized Airflow using environment variables from `.env`.
+- The CSV file is stored in the `sample_data/` folder.
+- The schema for this dataset is defined in `config/schema_expected.yaml`.
+- The PostgreSQL table definition is provided in `config/create_table.sql`.
