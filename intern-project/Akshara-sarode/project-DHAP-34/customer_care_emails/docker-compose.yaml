@@ -3,98 +3,112 @@ x-airflow-common: &airflow-common
     context: .
     dockerfile: Dockerfile
   image: dhap34-airflow:2.9.3
+
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_DB_USER:-airflow}:${AIRFLOW_DB_PASSWORD:-airflow}@airflow-db:5432/${AIRFLOW_DB_NAME:-airflow}
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
     AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
+
     AIRFLOW_UID: ${AIRFLOW_UID:-50000}
     AIRFLOW_ADMIN_USER: ${AIRFLOW_ADMIN_USER:-airflow}
     AIRFLOW_ADMIN_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD:-airflow}
     AIRFLOW_ADMIN_EMAIL: ${AIRFLOW_ADMIN_EMAIL:-airflow@example.com}
+
     AIRFLOW_CONN_TARGET_POSTGRES: postgresql+psycopg2://${PG_USER:-postgres}:${PG_PASSWORD:-postgres}@target-postgres:5432/${PG_DB:-customer_care_emails}
+
   volumes:
     - ./dags:/opt/airflow/dags
+    - ./:/opt/airflow/project
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ./sample_data:/opt/airflow/project/sample_data
-    - ./config:/opt/airflow/project/config
-    - ./MANIFEST.md:/opt/airflow/project/MANIFEST.md
+
   user: "${AIRFLOW_UID:-50000}:0"
 
 services:
+
   airflow-db:
     image: postgres:15
+
     environment:
       POSTGRES_USER: ${AIRFLOW_DB_USER:-airflow}
       POSTGRES_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow}
       POSTGRES_DB: ${AIRFLOW_DB_NAME:-airflow}
+
     volumes:
       - airflow_db_data:/var/lib/postgresql/data
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${AIRFLOW_DB_USER:-airflow} -d ${AIRFLOW_DB_NAME:-airflow}"]
+      test: ["CMD-SHELL","pg_isready -U ${AIRFLOW_DB_USER:-airflow} -d ${AIRFLOW_DB_NAME:-airflow}"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 5s
-    restart: always
 
   target-postgres:
     image: postgres:15
+
     environment:
       POSTGRES_USER: ${PG_USER:-postgres}
       POSTGRES_PASSWORD: ${PG_PASSWORD:-postgres}
       POSTGRES_DB: ${PG_DB:-customer_care_emails}
+
     ports:
       - "5433:5432"
+
     volumes:
       - target_postgres_data:/var/lib/postgresql/data
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PG_USER:-postgres} -d ${PG_DB:-customer_care_emails}"]
+      test: ["CMD-SHELL","pg_isready -U ${PG_USER:-postgres} -d ${PG_DB:-customer_care_emails}"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 5s
-    restart: always
 
   airflow-init:
     <<: *airflow-common
+
     depends_on:
       airflow-db:
         condition: service_healthy
+
     entrypoint: /bin/bash
+
     command: >
       -c "
       airflow db migrate &&
-      (airflow users create
+      airflow users create
       --username ${AIRFLOW_ADMIN_USER:-airflow}
       --password ${AIRFLOW_ADMIN_PASSWORD:-airflow}
       --firstname Airflow
       --lastname Admin
       --role Admin
       --email ${AIRFLOW_ADMIN_EMAIL:-airflow@example.com}
-      || true)
+      || true
       "
+
     user: "0:0"
 
   airflow-webserver:
     <<: *airflow-common
+
     depends_on:
       airflow-init:
         condition: service_completed_successfully
+
     command: webserver
+
     ports:
       - "8080:8080"
-    restart: always
 
   airflow-scheduler:
     <<: *airflow-common
+
     depends_on:
       airflow-init:
         condition: service_completed_successfully
+
     command: scheduler
-    restart: always
 
 volumes:
   airflow_db_data:
