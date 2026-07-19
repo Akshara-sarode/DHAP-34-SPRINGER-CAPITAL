@@ -1,5 +1,8 @@
 x-airflow-common: &airflow-common
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.9.3}
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: dhap34-airflow:2.9.3
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_DB_USER:-airflow}:${AIRFLOW_DB_PASSWORD:-airflow}@airflow-db:5432/${AIRFLOW_DB_NAME:-airflow}
@@ -10,11 +13,14 @@ x-airflow-common: &airflow-common
     AIRFLOW_ADMIN_USER: ${AIRFLOW_ADMIN_USER:-airflow}
     AIRFLOW_ADMIN_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD:-airflow}
     AIRFLOW_ADMIN_EMAIL: ${AIRFLOW_ADMIN_EMAIL:-airflow@example.com}
+    AIRFLOW_CONN_TARGET_POSTGRES: postgresql+psycopg2://${PG_USER:-postgres}:${PG_PASSWORD:-postgres}@target-postgres:5432/${PG_DB:-customer_care_emails}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ./extraction:/opt/airflow/extraction
+    - ./sample_data:/opt/airflow/project/sample_data
+    - ./config:/opt/airflow/project/config
+    - ./MANIFEST.md:/opt/airflow/project/MANIFEST.md
   user: "${AIRFLOW_UID:-50000}:0"
 
 services:
