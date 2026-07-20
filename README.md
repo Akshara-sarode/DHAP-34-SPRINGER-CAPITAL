@@ -6,6 +6,15 @@ This project implements a Dockerized Apache Airflow pipeline that ingests a loca
 
 The project was completed as part of **DHAP-34** and demonstrates an end-to-end ETL workflow using Apache Airflow, Docker, PostgreSQL, and Python.
 
+<img width="468" height="274" alt="image" src="https://github.com/user-attachments/assets/c698d440-b0f5-4dff-9ea7-030926a7c486" />
+
+<img width="468" height="222" alt="image" src="https://github.com/user-attachments/assets/aa030e01-02f0-46ae-af19-6aaa93db81d7" />
+
+<img width="468" height="168" alt="image" src="https://github.com/user-attachments/assets/0b45150c-5855-447d-8a6a-114a4e5eac37" />
+
+<img width="468" height="205" alt="image" src="https://github.com/user-attachments/assets/d101084b-c80b-452a-9467-cb8d018854f0" />
+
+
 ---
 
 # Objective
