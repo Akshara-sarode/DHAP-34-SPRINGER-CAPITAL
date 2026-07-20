@@ -11,12 +11,13 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from psycopg2.extras import execute_values
 
+# Flat layout: files are directly inside /opt/airflow/project
 PROJECT_DIR = Path("/opt/airflow/project")
 MANIFEST_PATH = PROJECT_DIR / "MANIFEST.md"
-SCHEMA_PATH = PROJECT_DIR / "config" / "schema_expected.yaml"
-DDL_PATH = PROJECT_DIR / "config" / "create_table.sql"
-CSV_PATH = PROJECT_DIR / "sample_data" / "dataset.csv"
-CLEANED_CSV_PATH = PROJECT_DIR / "sample_data" / "dataset_cleaned.csv"
+SCHEMA_PATH = PROJECT_DIR / "schema_expected.yaml"
+DDL_PATH = PROJECT_DIR / "create_table.sql"
+CSV_PATH = PROJECT_DIR / "dataset.csv"
+CLEANED_CSV_PATH = PROJECT_DIR / "dataset_cleaned.csv"
 
 
 def read_schema() -> dict:
